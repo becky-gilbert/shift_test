@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+	<title>Shift test</title>
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+	<script src = "/study_assets/jspsych-5.0.3/jspsych.js" type="text/javascript"></script>
+	<script src = "/study_assets/jspsych-5.0.3/plugins/jspsych-instructions.js" type="text/javascript"></script>
+	<script src = "/study_assets/jspsych-5.0.3/plugins/jspsych-single-audio.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="/study_assets/spsych-5.0.3/css/jspsych.css">
+	<script src="/assets/javascripts/jatos.js"></script>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+
+// generate a random subject ID
+var subject_id = Math.floor(Math.random()*1000000)
+
+// pick a random condition for the subject at the start of the experiment
+var condition_assignment = jsPsych.randomization.sample(['test1', 'test2'],1)[0];
+
+//var stimulusData = [];
+
+// add the subject ID and condition assigment to the data
+jsPsych.data.addProperties({
+	subject: subject_id,
+	condition: condition_assignment
+})
+
+var instructions = {
+	type: 'instructions',
+	pages: ['<p>In this experiment, you will hear sequences of words, presented at a steady rate.<br><br>' + 
+	'Your task is to press the &quot;<strong>f</strong>&quot; key with your left index finger<br>' +
+	'when you think one of the words <strong>has not</strong> been shifted in time,<br>' +
+	'and press the &quot;<strong>j</strong>&quot; key with your right index finger<br>' +
+	'when you think one of the words <strong>has</strong> been shifted in time.' +
+	'<br><br>Press Next to continue.</p>'
+	],
+	show_clickable_nav: true
+}
+
+var audio_trials = {
+	type: 'single-audio',
+	choices: ['f','j'],
+	prompt: "<p>No shift = &quot;f&quot;                   Shift = &quot;j&quot;</p>",
+	timing_response: -1,
+	response_ends_trial: true,
+	data: [
+	{condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'},
+	{condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'},
+	{condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'},
+	],
+	timeline: [
+	{stimulus: "test1/1_0_1_1_final_one_grey_cow_down.wav"},
+	{stimulus: "test1/2_0_1_1_final_one_blue_sheep_down.wav"},
+	{stimulus: "test1/2_1_3_2_final_three_black_cow_left.wav"},
+	],
+	randomize_order: true
+}
+
+var end_screen = {
+	type: 'instructions',
+	pages: ['<p>The end. Press Next to finish.</p>'],
+	show_clickable_nav: true
+}
+
+jatos.onLoad(function() {
+	jsPsych.init({
+		timeline: [instructions, audio_trials, end_screen],
+		on_finish: function() {jsPsych.data.displayData();}
+	});
+});
+</script>
+</html>
