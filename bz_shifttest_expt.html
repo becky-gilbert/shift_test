@@ -20,14 +20,25 @@ var subject_id = Math.floor(Math.random()*1000000)
 // pick a random condition for the subject at the start of the experiment
 var version_assignment = jsPsych.randomization.sample(['test1', 'test2'],1)[0];
 
-var trial_data = [
+if (version_assignment == 'test1') {
+	var trial_data = [
 	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test1/1_0_1_1_final_one_grey_cow_down.mp3", 
-		data: {condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	data: {condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
 	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test1/2_0_1_1_final_one_blue_sheep_down.mp3", 
-		data: {condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	data: {condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
 	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test1/2_1_3_2_final_three_black_cow_left.mp3", 
-		data: {condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'}}
-];
+	data: {condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'}}
+	];
+} else {
+	var trial_data = [
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test2/2_0_1_2_final_one_green_fly_left.mp3", 
+	data: {condition: 2, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test2/3_0_1_2_final_two_white_frog_right.mp3", 
+	data: {condition: 3, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test2/4_1_1_1_final_one_pink_horse_left.mp3", 
+	data: {condition: 4, shift: 1, syllable: 1, direction: 1, correctResponse: 'j'}}
+	];
+}
 
 // add the subject ID and condition assigment to the data
 jsPsych.data.addProperties({
