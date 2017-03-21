@@ -3,10 +3,11 @@
 <head>
 	<title>Shift test</title>
 	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
-	<script src = "/study_assets/jspsych-5.0.3/jspsych.js" type="text/javascript"></script>
-	<script src = "/study_assets/jspsych-5.0.3/plugins/jspsych-instructions.js" type="text/javascript"></script>
-	<script src = "/study_assets/jspsych-5.0.3/plugins/jspsych-single-audio.js" type="text/javascript"></script>
-	<link rel="stylesheet" type="text/css" href="/study_assets/spsych-5.0.3/css/jspsych.css">
+	<script src = "/study_assets/BZ_Shift_Test_Demo/jspsych-5.0.3/jspsych.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo/jspsych-5.0.3/plugins/jspsych-instructions.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo/jspsych-5.0.3/plugins/jspsych-single-audio.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo/jspsych-5.0.3/plugins/jspsych-text.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="/study_assets/BZ_Shift_Test_Demo/jspsych-5.0.3/css/jspsych.css">
 	<script src="/assets/javascripts/jatos.js"></script>
 </head>
 <body>
@@ -17,14 +18,21 @@
 var subject_id = Math.floor(Math.random()*1000000)
 
 // pick a random condition for the subject at the start of the experiment
-var condition_assignment = jsPsych.randomization.sample(['test1', 'test2'],1)[0];
+var version_assignment = jsPsych.randomization.sample(['test1', 'test2'],1)[0];
 
-//var stimulusData = [];
+var trial_data = [
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test1/1_0_1_1_final_one_grey_cow_down.mp3", 
+		data: {condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test1/2_0_1_1_final_one_blue_sheep_down.mp3", 
+		data: {condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo/test1/2_1_3_2_final_three_black_cow_left.mp3", 
+		data: {condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'}}
+];
 
 // add the subject ID and condition assigment to the data
 jsPsych.data.addProperties({
 	subject: subject_id,
-	condition: condition_assignment
+	version: version_assignment
 })
 
 var instructions = {
@@ -42,32 +50,33 @@ var instructions = {
 var audio_trials = {
 	type: 'single-audio',
 	choices: ['f','j'],
-	prompt: "<p>No shift = &quot;f&quot;                   Shift = &quot;j&quot;</p>",
+	prompt: "<div><p style = 'float: left;'><strong>No shift = f</strong></p><p style = 'float: right;'><strong>Shift = j</strong></p><div style='clear: both;'</div></div>", 
+	//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 	timing_response: -1,
 	response_ends_trial: true,
-	data: [
-	{condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'},
-	{condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'},
-	{condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'},
-	],
-	timeline: [
-	{stimulus: "test1/1_0_1_1_final_one_grey_cow_down.wav"},
-	{stimulus: "test1/2_0_1_1_final_one_blue_sheep_down.wav"},
-	{stimulus: "test1/2_1_3_2_final_three_black_cow_left.wav"},
-	],
+	timeline: trial_data,
 	randomize_order: true
 }
 
 var end_screen = {
 	type: 'instructions',
-	pages: ['<p>The end. Press Next to finish.</p>'],
+	pages: ['<p>The end. Press Next to see the data, then press any key to finish.</p>'],
 	show_clickable_nav: true
+}
+
+var data_screen = {
+	type: 'text',
+	text: function() {jsPsych.data.displayData();},
+	cont_key: []
 }
 
 jatos.onLoad(function() {
 	jsPsych.init({
-		timeline: [instructions, audio_trials, end_screen],
-		on_finish: function() {jsPsych.data.displayData();}
+		timeline: [instructions, audio_trials, end_screen, data_screen],
+		on_finish: function() {
+			var resultJson = JSON.stringify(jsPsych.data.getData());
+			jatos.submitResultData(resultJson, jatos.startNextComponent);
+		}
 	});
 });
 </script>
