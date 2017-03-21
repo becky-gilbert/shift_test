@@ -65,7 +65,25 @@ var audio_trials = {
 	timing_response: -1,
 	response_ends_trial: true,
 	timeline: trial_data,
-	randomize_order: true
+	randomize_order: true,
+	on_finish: function(data) {
+		var correct = 0;
+		var response_type = "false alarm";
+		if (data.shift == 1) { // shift in sound file
+			if (data.key_press == 74) { // 74 = j (shift), hit
+				correct = 1;
+				response_type = "hit"
+			} else { // 70 = f (no shift), miss
+				response_type = "miss"
+			}
+		} else if (data.shift == 0) { // no shift in sound file
+			if (data.key_press == 70) { // 70 = f (no shift), correct rejection
+				correct = 1;
+				response_type = "correct rejection"
+			}
+		}
+		jsPsych.data.addDataToLastTrial({accuracy: correct, response_type: response_type});
+	} 
 }
 
 var end_screen = {
