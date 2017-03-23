@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+	<title>Shift test</title>
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/jspsych.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-instructions.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-single-audio.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-text.js" type="text/javascript"></script>
+	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-single-stim.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/css/jspsych.css">
+	<script src="/assets/javascripts/jatos.js"></script>
+</head>
+<body>
+</body>
+<script type="text/javascript">
+
+// generate a random subject ID
+var subject_id = Math.floor(Math.random()*1000000)
+
+// pick a random condition for the subject at the start of the experiment
+var version_assignment = jsPsych.randomization.sample(['test1', 'test2'],1)[0];
+
+if (version_assignment == 'test1') {
+	var trial_data = [
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/1_0_1_1_final_one_grey_cow_down.mp3", 
+	data: {condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/2_0_1_1_final_one_blue_sheep_down.mp3", 
+	data: {condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/2_1_3_2_final_three_black_cow_left.mp3", 
+	data: {condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'}}
+	];
+} else {
+	var trial_data = [
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/2_0_1_2_final_one_green_fly_left.mp3", 
+	data: {condition: 2, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/3_0_1_2_final_two_white_frog_right.mp3", 
+	data: {condition: 3, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
+	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/4_1_1_1_final_one_pink_horse_left.mp3", 
+	data: {condition: 4, shift: 1, syllable: 1, direction: 1, correctResponse: 'j'}}
+	];
+}
+
+// add the subject ID and condition assigment to the data
+jsPsych.data.addProperties({
+	subject: subject_id,
+	version: version_assignment
+})
+
+var instructions = {
+	type: 'instructions',
+	pages: ['<p>In this experiment, you will hear sequences of words, presented at a steady rate.<br><br>' + 
+	'Your task is to press the &quot;<strong>f</strong>&quot; key with your left index finger<br>' +
+	'when you think one of the words <strong>has not</strong> been shifted in time,<br>' +
+	'and press the &quot;<strong>j</strong>&quot; key with your right index finger<br>' +
+	'when you think one of the words <strong>has</strong> been shifted in time.' +
+	'<br><br>Press Next to continue.</p>'
+	],
+	show_clickable_nav: true
+}
+
+// function for generating the feedback stimulus on each trial
+function getFeedbackHtml() {
+	var last_trial_data = jsPsych.data.getLastTrialData();
+	var feedbackText = "Incorrect.";
+	var textColor = "red";
+	if (last_trial_data.accuracy == 1) {
+		feedbackText = "Correct!";
+		textColor = "green";
+	}
+	htmlString = "<div style = 'text-align: center;'><p style = 'color:" + textColor + ";'><strong>" + feedbackText + "</strong></p></div>";
+	return htmlString;
+};
+
+// create audio trials in a loop so that the feedback can be added after each one
+var audio_timeline = [];
+for (var i=0; i < trial_data.length; i++) {
+	var audio_trial = {
+		type: 'single-audio',
+		choices: ['f','j'],
+		 prompt: "<div style = 'margin-left: 15%; margin-right: 15%;'><p style = 'text-align: left;'><strong>No shift = f</strong><span style = 'float: right;'><strong>Shift = j</strong></span></p></div>",
+		timing_response: -1,
+		response_ends_trial: true,
+		stimulus: trial_data[i].stimulus,
+		data: trial_data[i].data,
+		randomize_order: true,
+		timing_post_trial: 0,
+		on_finish: function(data) {
+			var correct = 0;
+			var response_type = "false alarm";
+			if (data.shift == 1) { // shift in sound file
+				if (data.key_press == 74) { // 74 = j (shift), hit
+					correct = 1;
+					response_type = "hit"
+				} else { // 70 = f (no shift), miss
+					response_type = "miss"
+				}
+			} else if (data.shift == 0) { // no shift in sound file
+				if (data.key_press == 70) { // 70 = f (no shift), correct rejection
+					correct = 1;
+					response_type = "correct rejection"
+				}
+			}
+			jsPsych.data.addDataToLastTrial({accuracy: correct, response_type: response_type});
+		} 
+	}
+	var feedback_trial = {
+		type: 'single-stim',
+		stimulus: [getFeedbackHtml],
+		is_html: true,
+		timing_stim: 1500,
+		timing_response: 1500,
+		response_ends_trial: false
+	}
+	audio_timeline = audio_timeline.concat(audio_trial)
+	audio_timeline = audio_timeline.concat(feedback_trial);
+}
+
+var end_screen = {
+	type: 'instructions',
+	pages: ['<p>The end. Press Next to see the data, then press any key to finish.</p>'],
+	show_clickable_nav: true
+}
+
+var data_screen = {
+	type: 'text',
+	text: function() {jsPsych.data.displayData();},
+	cont_key: []
+}
+
+var timeline = [];
+timeline = timeline.concat(instructions, audio_timeline, end_screen, data_screen);
+// flatten timeline
+var timelineFlat = [].concat.apply([],timeline);
+
+jatos.onLoad(function() {
+	jsPsych.init({
+		timeline: timelineFlat,
+		on_finish: function() {
+			var resultJson = JSON.stringify(jsPsych.data.getData());
+			jatos.submitResultData(resultJson, jatos.startNextComponent);
+		}
+	});
+});
+</script>
+</html>
