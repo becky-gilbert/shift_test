@@ -15,11 +15,13 @@
 </body>
 <script type="text/javascript">
 
-// generate a random subject ID
-var subject_id = Math.floor(Math.random()*1000000)
-
 // pick a random condition for the subject at the start of the experiment
 var version_assignment = jsPsych.randomization.sample(['test1', 'test2'],1)[0];
+
+// add the condition assigment to the data
+jsPsych.data.addProperties({
+	version: version_assignment
+})
 
 if (version_assignment == 'test1') {
 	var trial_data = [
@@ -39,24 +41,6 @@ if (version_assignment == 'test1') {
 	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/4_1_1_1_final_one_pink_horse_left.mp3", 
 	data: {condition: 4, shift: 1, syllable: 1, direction: 1, correctResponse: 'j'}}
 	];
-}
-
-// add the subject ID and condition assigment to the data
-jsPsych.data.addProperties({
-	subject: subject_id,
-	version: version_assignment
-})
-
-var instructions = {
-	type: 'instructions',
-	pages: ['<p>In this experiment, you will hear sequences of words, presented at a steady rate.<br><br>' + 
-	'Your task is to press the &quot;<strong>f</strong>&quot; key with your left index finger<br>' +
-	'when you think one of the words <strong>has not</strong> been shifted in time,<br>' +
-	'and press the &quot;<strong>j</strong>&quot; key with your right index finger<br>' +
-	'when you think one of the words <strong>has</strong> been shifted in time.' +
-	'<br><br>Press Next to continue.</p>'
-	],
-	show_clickable_nav: true
 }
 
 // function for generating the feedback stimulus on each trial
@@ -116,26 +100,13 @@ for (var i=0; i < trial_data.length; i++) {
 	audio_timeline = audio_timeline.concat(feedback_trial);
 }
 
-var end_screen = {
-	type: 'instructions',
-	pages: ['<p>The end. Press Next to see the data, then press any key to finish.</p>'],
-	show_clickable_nav: true
-}
-
-var data_screen = {
-	type: 'text',
-	text: function() {jsPsych.data.displayData();},
-	cont_key: []
-}
-
-var timeline = [];
-timeline = timeline.concat(instructions, audio_timeline, end_screen, data_screen);
+//var timeline = [audio_timeline];
 // flatten timeline
-var timelineFlat = [].concat.apply([],timeline);
+//var timelineFlat = [].concat.apply([],timeline);
 
 jatos.onLoad(function() {
 	jsPsych.init({
-		timeline: timelineFlat,
+		timeline: [audio_timeline],
 		on_finish: function() {
 			var resultJson = JSON.stringify(jsPsych.data.getData());
 			jatos.submitResultData(resultJson, jatos.startNextComponent);
