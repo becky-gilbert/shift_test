@@ -62,7 +62,7 @@ for (var i=0; i < trial_data.length; i++) {
 	var audio_trial = {
 		type: 'single-audio',
 		choices: ['f','j'],
-		 prompt: "<div style = 'margin-left: 15%; margin-right: 15%;'><p style = 'text-align: left;'><strong>No shift = f</strong><span style = 'float: right;'><strong>Shift = j</strong></span></p></div>",
+		prompt: "<div style = 'margin-left: 15%; margin-right: 15%;'><p style = 'text-align: left;'><strong>No shift = f</strong><span style = 'float: right;'><strong>Shift = j</strong></span></p></div>",
 		timing_response: -1,
 		response_ends_trial: true,
 		stimulus: trial_data[i].stimulus,
@@ -96,7 +96,7 @@ for (var i=0; i < trial_data.length; i++) {
 		timing_response: 1500,
 		response_ends_trial: false
 	}
-	audio_timeline = audio_timeline.concat(audio_trial)
+	audio_timeline = audio_timeline.concat(audio_trial);
 	audio_timeline = audio_timeline.concat(feedback_trial);
 }
 
