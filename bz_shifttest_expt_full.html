@@ -24,17 +24,6 @@ jsPsych.data.addProperties({
 	version: version_assignment
 })
 
-// get the trial data from the JSON string via JATOS
-if (version_assignment == 'test1') {
-	var trial_obj = jatos.studyJsonInput[0].trial_data;
-	var file_path = "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/";
-	console.log(trial_obj);
-} else {
-	var trial_obj = jatos.studyJsonInput[1].trial_data;
-	var file_path = "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/";
-	console.log(trial_obj);
-}
-
 // function for generating the feedback stimulus on each trial
 function getFeedbackHtml() {
 	var last_trial_data = jsPsych.data.getLastTrialData();
@@ -97,6 +86,17 @@ for (var i=0; i < trial_obj.length; i++) {
 //var timelineFlat = [].concat.apply([],timeline);
 
 jatos.onLoad(function() {
+	// get the trial data from the JSON string via JATOS
+	if (version_assignment == 'test1') {
+		var trial_obj = jatos.studyJsonInput[0].trial_data;
+		var file_path = "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/";
+		console.log(trial_obj);
+	} else {
+		var trial_obj = jatos.studyJsonInput[1].trial_data;
+		var file_path = "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/";
+		console.log(trial_obj);
+	}
+	
 	jsPsych.init({
 		timeline: [audio_timeline],
 		on_finish: function() {
