@@ -92,11 +92,8 @@ for (var i=0; i < trial_obj.length; i++) {
 	audio_timeline = audio_timeline.concat(feedback_trial);
 }
 
-var timeline = [audio_timeline];
 // flatten timeline
-var timelineFlat = [].concat.apply([],timeline);
-console.log(audio_timeline);
-console.log(timelineFlat);
+var timelineFlat = [].concat.apply([],audio_timeline);
 
 jsPsych.init({
 	timeline: timelineFlat,
