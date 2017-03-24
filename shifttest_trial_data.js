@@ -435,7 +435,25 @@ var all_trial_data = [
 
 
 
-// { // original structure
+// { // original structure, was included in the main experiment js file
+// var trial_data = [
+	// {stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/1_0_1_1_final_one_grey_cow_down.mp3", 
+	// data: {condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	// {stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/2_0_1_1_final_one_blue_sheep_down.mp3", 
+	// data: {condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
+	// {stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/2_1_3_2_final_three_black_cow_left.mp3", 
+	// data: {condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'}}
+	// ];
+	// var trial_data = [
+	// {stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/2_0_1_2_final_one_green_fly_left.mp3", 
+	// data: {condition: 2, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
+	// {stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/3_0_1_2_final_two_white_frog_right.mp3", 
+	// data: {condition: 3, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
+	// {stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/4_1_1_1_final_one_pink_horse_left.mp3", 
+	// data: {condition: 4, shift: 1, syllable: 1, direction: 1, correctResponse: 'j'}}
+	// ];
+
+
 // 	version: "2",
 // 	trial_data:[
 // 	{

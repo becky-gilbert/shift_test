@@ -8,6 +8,7 @@
 	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-single-audio.js" type="text/javascript"></script>
 	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-text.js" type="text/javascript"></script>
 	<script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/plugins/jspsych-single-stim.js" type="text/javascript"></script>
+	<!-- <script src = "/study_assets/BZ_Shift_Test_Demo_Feedback/shifttest_trial_data.js" type="text/javascript"></script> -->
 	<link rel="stylesheet" type="text/css" href="/study_assets/BZ_Shift_Test_Demo_Feedback/jspsych-5.0.3/css/jspsych.css">
 	<script src="/assets/javascripts/jatos.js"></script>
 </head>
@@ -23,24 +24,15 @@ jsPsych.data.addProperties({
 	version: version_assignment
 })
 
+// get the trial data from the JSON string via JATOS
 if (version_assignment == 'test1') {
-	var trial_data = [
-	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/1_0_1_1_final_one_grey_cow_down.mp3", 
-	data: {condition: 1, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
-	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/2_0_1_1_final_one_blue_sheep_down.mp3", 
-	data: {condition: 2, shift: 0, syllable: 1, direction: 1, correctResponse: 'f'}},
-	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/2_1_3_2_final_three_black_cow_left.mp3", 
-	data: {condition: 2, shift: 1, syllable: 3, direction: 2, correctResponse: 'j'}}
-	];
+	var trial_obj = jatos.studyJsonInput[0].trial_data;
+	var file_path = "/study_assets/BZ_Shift_Test_Demo_Feedback/test1/";
+	console.log(trial_obj);
 } else {
-	var trial_data = [
-	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/2_0_1_2_final_one_green_fly_left.mp3", 
-	data: {condition: 2, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
-	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/3_0_1_2_final_two_white_frog_right.mp3", 
-	data: {condition: 3, shift: 0, syllable: 1, direction: 2, correctResponse: 'f'}},
-	{stimulus: "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/4_1_1_1_final_one_pink_horse_left.mp3", 
-	data: {condition: 4, shift: 1, syllable: 1, direction: 1, correctResponse: 'j'}}
-	];
+	var trial_obj = jatos.studyJsonInput[1].trial_data;
+	var file_path = "/study_assets/BZ_Shift_Test_Demo_Feedback/test2/";
+	console.log(trial_obj);
 }
 
 // function for generating the feedback stimulus on each trial
@@ -58,15 +50,15 @@ function getFeedbackHtml() {
 
 // create audio trials in a loop so that the feedback can be added after each one
 var audio_timeline = [];
-for (var i=0; i < trial_data.length; i++) {
+for (var i=0; i < trial_obj.length; i++) {
 	var audio_trial = {
 		type: 'single-audio',
 		choices: ['f','j'],
 		prompt: "<div style = 'margin-left: 15%; margin-right: 15%;'><p style = 'text-align: left;'><strong>No shift = f</strong><span style = 'float: right;'><strong>Shift = j</strong></span></p></div>",
 		timing_response: -1,
 		response_ends_trial: true,
-		stimulus: trial_data[i].stimulus,
-		data: trial_data[i].data,
+		stimulus: [file_path, trial_obj[i].fileName].join(""),
+		data: trial_obj,
 		randomize_order: true,
 		timing_post_trial: 0,
 		on_finish: function(data) {
